@@ -1,0 +1,169 @@
+Zepto Data Pipeline — SQL query strings and outputs
+========================================================================
+
+QUERY: q1_select_where_in_stock_high_rating
+------------------------------------------------------------------------
+SELECT title, rating, price_gbp, in_stock
+        FROM books
+        WHERE in_stock = 1 AND rating >= 4
+        ORDER BY rating DESC, title ASC;
+
+OUTPUT:
+                                                                            title  rating  price_gbp  in_stock
+                                          A Flight of Arrows (The Pathfinders #2)       5      55.53         1
+                                A Spy's Devotion (The Regency Spies of London #1)       5      16.97         1
+                                           A Time of Torment (Charlie Parker #14)       5      48.35         1
+                                         Batman: The Dark Knight Returns (Batman)       5      15.38         1
+                                                           Between Shades of Gray       5      20.79         1
+                      Bleach, Vol. 1: Strawberry and the Soul Reapers (Bleach #1)       5      34.65         1
+                                                                         El Deafo       5      57.62         1
+                                         Fruits Basket, Vol. 1 (Fruits Basket #1)       5      40.28         1
+                                         Fruits Basket, Vol. 2 (Fruits Basket #2)       5      11.64         1
+                                                                     Mrs. Houdini       5      30.25         1
+Princess Jellyfish 2-in-1 Omnibus, Vol. 01 (Princess Jellyfish 2-in-1 Omnibus #1)       5      13.61         1
+        Rat Queens, Vol. 1: Sass & Sorcery (Rat Queens (Collected Editions) #1-5)       5      46.96         1
+                                                                      Roller Girl       5      14.10         1
+                                    Saga, Volume 3 (Saga (Collected Editions) #3)       5      21.57         1
+                          Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)       5      52.29         1
+                    Superman Vol. 1: Before Truth (Superman by Gene Luen Yang #1)       5      11.89         1
+         The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1)       5      52.30         1
+                                                                The Girl You Lost       5      12.29         1
+                                                            The Passion of Dolssa       5      28.32         1
+                                                                     The Red Tent       5      35.66         1
+                    The Sandman, Vol. 3: Dream Country (The Sandman (volumes) #3)       5      55.55         1
+                                                The Silkworm (Cormoran Strike #2)       5      23.05         1
+                                                           Voyager (Outlander #3)       5      21.07         1
+                What Happened on Beale Street (Secrets of the South Mysteries #2)       5      25.37         1
+                                                              While You Were Mine       5      41.32         1
+                                                                A Paris Apartment       4      39.01         1
+                                 Ajin: Demi-Human, Volume 1 (Ajin: Demi-Human #1)       4      57.06         1
+                                                                    Camp Midnight       4      17.08         1
+                              Codename Baboushka, Volume 1: The Conclave of Death       4      36.72         1
+                                                             Danganronpa Volume 1       4      51.99         1
+                                 Delivering the Truth (Quaker Midwife Mystery #1)       4      20.89         1
+                                     Fables, Vol. 1: Legends in Exile (Fables #1)       4      41.62         1
+                                         Fruits Basket, Vol. 4 (Fruits Basket #4)       4      50.44         1
+                                         Fruits Basket, Vol. 6 (Fruits Basket #6)       4      20.96         1
+                                         Fruits Basket, Vol. 9 (Fruits Basket #9)       4      33.95         1
+                                             Giant Days, Vol. 1 (Giant Days #1-4)       4      56.76         1
+                                                            Lost Among the Living       4      27.70         1
+                        Ms. Marvel, Vol. 1: No Normal (Ms. Marvel (2014-2015) #1)       4      39.39         1
+                            Murder at the 42nd Street Library (Raymond Ambler #1)       4      54.36         1
+                           Outcast, Vol. 1: A Darkness Surrounds Him (Outcast #1)       4      15.44         1
+                                           Paper Girls, Vol. 1 (Paper Girls #1-5)       4      21.71         1
+                                                                    Sharp Objects       4      47.82         1
+                               So Cute It Hurts!!, Vol. 6 (So Cute It Hurts!! #6)       4      35.43         1
+                                                        The Marriage of Opposites       4      28.08         1
+                                  The Murder of Roger Ackroyd (Hercule Poirot #4)       4      44.10         1
+                              The Mysterious Affair at Styles (Hercule Poirot #1)       4      24.80         1
+                                         The Nameless City (The Nameless City #1)       4      38.16         1
+           The No. 1 Ladies' Detective Agency (No. 1 Ladies' Detective Agency #1)       4      57.70         1
+                                                              The Past Never Ends       4      56.50         1
+                                                                  This One Summer       4      19.49         1
+                 Wonder Woman: Earth One, Volume One (Wonder Woman: Earth One #1)       4      37.34         1
+                                  World Without End (The Pillars of the Earth #2)       4      32.97         1
+                           Y: The Last Man, Vol. 1: Unmanned (Y: The Last Man #1)       4      18.51         1
+
+
+QUERY: q2_order_by_limit_expensive
+------------------------------------------------------------------------
+SELECT title, price_gbp, price_inr, rating
+        FROM books
+        ORDER BY price_gbp DESC, title ASC, book_id ASC
+        LIMIT 10;
+
+OUTPUT:
+                                                                 title  price_gbp  price_inr  rating
+                                         Boar Island (Anna Pigeon #19)      59.48    6275.14       3
+The No. 1 Ladies' Detective Agency (No. 1 Ladies' Detective Agency #1)      57.70    6087.35       4
+                                                              El Deafo      57.62    6078.91       5
+                      Ajin: Demi-Human, Volume 1 (Ajin: Demi-Human #1)      57.06    6019.83       4
+                                  Giant Days, Vol. 1 (Giant Days #1-4)      56.76    5988.18       4
+                                                   The Past Never Ends      56.50    5960.75       4
+                                      The Last Painting of Sara de Vos      55.55    5860.52       2
+         The Sandman, Vol. 3: Dream Country (The Sandman (volumes) #3)      55.55    5860.52       5
+                               A Flight of Arrows (The Pathfinders #2)      55.53    5858.41       5
+      The Sandman, Vol. 2: The Doll's House (The Sandman (volumes) #2)      54.81    5782.45       1
+
+
+QUERY: q3_distinct_categories
+------------------------------------------------------------------------
+SELECT DISTINCT category_name
+        FROM categories
+        ORDER BY category_name;
+
+OUTPUT:
+     category_name
+Historical Fiction
+           Mystery
+    Sequential Art
+
+
+QUERY: q4_between_mid_price
+------------------------------------------------------------------------
+SELECT title, price_gbp, rating
+        FROM books
+        WHERE price_gbp BETWEEN 20 AND 40
+        ORDER BY price_gbp ASC
+        LIMIT 15;
+
+OUTPUT:
+                                                            title  price_gbp  rating
+                             Blood Defense (Samantha Brinkman #1)      20.30       3
+                                             Love, Lies and Spies      20.55       2
+                                           Between Shades of Gray      20.79       5
+                 Delivering the Truth (Quaker Midwife Mystery #1)      20.89       4
+                         Fruits Basket, Vol. 6 (Fruits Basket #6)      20.96       4
+                                           Voyager (Outlander #3)      21.07       5
+                    Saga, Volume 3 (Saga (Collected Editions) #3)      21.57       5
+                           Paper Girls, Vol. 1 (Paper Girls #1-5)      21.71       4
+                             Giant Days, Vol. 2 (Giant Days #5-8)      22.11       2
+                                The Silkworm (Cormoran Strike #2)      23.05       5
+                              Career of Evil (Cormoran Strike #3)      24.72       2
+              The Mysterious Affair at Styles (Hercule Poirot #1)      24.80       4
+What Happened on Beale Street (Secrets of the South Mysteries #2)      25.37       5
+                                                Through the Woods      25.38       2
+                               Extreme Prey (Lucas Davenport #26)      25.40       3
+
+
+QUERY: q5_join_books_categories
+------------------------------------------------------------------------
+SELECT b.title, b.price_gbp, b.rating, c.category_name
+        FROM books AS b
+        INNER JOIN categories AS c
+            ON b.category_id = c.category_id
+        WHERE c.category_name IN (
+            SELECT category_name FROM categories ORDER BY category_name LIMIT 3
+        )
+        ORDER BY c.category_name, b.title
+        LIMIT 20;
+
+OUTPUT:
+                                                                    title  price_gbp  rating      category_name
+                                  A Flight of Arrows (The Pathfinders #2)      55.53       5 Historical Fiction
+                                                        A Paris Apartment      39.01       4 Historical Fiction
+                        A Spy's Devotion (The Regency Spies of London #1)      16.97       5 Historical Fiction
+                                                   Between Shades of Gray      20.79       5 Historical Fiction
+Forever and Forever: The Courtship of Henry Longfellow and Fanny Appleton      29.69       3 Historical Fiction
+                                                Girl With a Pearl Earring      26.77       1 Historical Fiction
+                                                    Girl in the Blue Coat      46.83       2 Historical Fiction
+                          Glory over Everything: Beyond The Kitchen House      45.84       3 Historical Fiction
+                                                              Lilac Girls      17.28       2 Historical Fiction
+                                                    Lost Among the Living      27.70       4 Historical Fiction
+                                                     Love, Lies and Spies      20.55       2 Historical Fiction
+                                                             Mrs. Houdini      30.25       5 Historical Fiction
+                                                                 Starlark      25.83       3 Historical Fiction
+                               The Constant Princess (The Tudor Court #1)      16.62       3 Historical Fiction
+                        The Guernsey Literary and Potato Peel Pie Society      49.53       1 Historical Fiction
+                                                    The House by the Lake      36.95       1 Historical Fiction
+                                                   The Invention of Wings      37.34       1 Historical Fiction
+                                         The Last Painting of Sara de Vos      55.55       2 Historical Fiction
+                                                The Marriage of Opposites      28.08       4 Historical Fiction
+                                                    The Passion of Dolssa      28.32       5 Historical Fiction
+
+
+PANDAS vs SQL EQUIVALENCE
+------------------------------------------------------------------------
+EQUIVALENT: SQL q2 (ORDER BY/LIMIT) matches pandas sort_values + head(10).
+EQUIVALENT: SQL q3 (DISTINCT) matches pandas drop_duplicates.
+EQUIVALENT: SQL INNER JOIN books/categories matches pandas merge on category_id.
