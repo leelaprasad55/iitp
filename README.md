@@ -128,7 +128,7 @@ If `MOCK_LLM` is unset or `1`, intent uses a lowercase keyword heuristic (`deliv
 
 ## 19. Example API requests/responses
 
-Captured from a live local `/ask` call after the assistant is started (see Testing). Placeholders below are replaced with real JSON in the testing section of this README once the server is exercised.
+Captured from a live local `/ask` call with `MOCK_LLM=1` on 2026-09-21.
 
 **Policy query**
 
@@ -137,11 +137,19 @@ POST /ask
 {"query": "What is the return policy?"}
 ```
 
+```json
+{"answer":"Based on the retrieved context: Grocery and perishable items may be reported for a return within 24 hours of delivery if damaged, spoiled, or incorrect; non-perishable packaged items may be returned within 7 days of delivery in unop","sources":["doc_02.txt","doc_06.txt","doc_05.txt"],"confidence":1.0}
+```
+
 **General query**
 
 ```http
 POST /ask
 {"query": "Tell me a joke"}
+```
+
+```json
+{"answer":"I can only answer questions about Zepto policies right now.","sources":[],"confidence":1.0}
 ```
 
 ## 20. Testing instructions

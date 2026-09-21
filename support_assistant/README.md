@@ -50,7 +50,21 @@ docker run --rm -p 7860:7860 -e MOCK_LLM=1 zepto-support
 Policy (retrieval route): `What is the return policy?`  
 General (direct route): `Tell me a joke`
 
-See the root README for captured JSON responses after a live `/ask` call.
+## Captured API responses
+
+These raw JSON responses were captured from `POST /ask` with `MOCK_LLM=1` on 2026-09-21.
+
+`{"query": "What is the return policy?"}`
+
+```json
+{"answer":"Based on the retrieved context: Grocery and perishable items may be reported for a return within 24 hours of delivery if damaged, spoiled, or incorrect; non-perishable packaged items may be returned within 7 days of delivery in unop","sources":["doc_02.txt","doc_06.txt","doc_05.txt"],"confidence":1.0}
+```
+
+`{"query": "Tell me a joke"}`
+
+```json
+{"answer":"I can only answer questions about Zepto policies right now.","sources":[],"confidence":1.0}
+```
 
 ## Optional real LLM
 
