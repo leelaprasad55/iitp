@@ -18,6 +18,12 @@ User query → classify_intent → policy? → retrieve_and_answer
                               → else  → direct_answer
 ```
 
+Prompt contract:
+
+- Required section headings are exactly `ROLE:`, `CONTEXT:`, `TASK:`, `FORMAT:`, and `LENGTH:`.
+- The negative constraint remains: `Do not answer using information that is not present in the provided context.`
+- Chunk overlap is validated so adjacent chunks advance by `end - overlap` without getting stuck or duplicating the final slice.
+
 ## Run independently
 
 From the repository root:

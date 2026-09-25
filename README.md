@@ -124,7 +124,7 @@ Hugging Face Spaces deployment is optional and not required for grading.
 
 ## 18. MOCK_LLM explanation
 
-If `MOCK_LLM` is unset or `1`, intent uses a lowercase keyword heuristic (`delivery`, `return`, `refund`, `membership`, `tracking`, `cancel`, `gift card`, `support hours`). Retrieval still embeds the query and reads the top 3 Chroma chunks. Generation does **not** call an external LLM. `MOCK_LLM=0` is optional and reads keys from the environment only.
+Intent routing always uses the same lowercase keyword heuristic (`delivery`, `return`, `refund`, `membership`, `tracking`, `cancel`, `gift card`, `support hours`), independently of `MOCK_LLM`. If `MOCK_LLM` is unset or `1`, retrieval still embeds the query and reads the top 3 Chroma chunks, while generation does **not** call an external LLM. `MOCK_LLM=0` changes only the generation mechanism and reads keys from the environment only.
 
 ## 19. Example API requests/responses
 

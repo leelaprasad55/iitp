@@ -8,7 +8,9 @@ Conversions:
 - price_inr using a fixed rate of 1 GBP = 105.50 INR (no live FX API)
 
 Missing / invalid numeric values use median imputation. Rows without a title or
-category are dropped because those keys cannot be imputed meaningfully.
+category are dropped because those keys cannot be imputed meaningfully. Rows
+whose availability cannot be parsed are also dropped: an unknown availability
+must never be silently represented as "in stock".
 """
 
 from __future__ import annotations
@@ -107,7 +109,7 @@ def clean_books(raw_books: list[dict[str, Any]]) -> list[dict[str, Any]]:
     cleaned: list[dict[str, Any]] = []
     imputed_price = 0
     imputed_rating = 0
-    imputed_stock = 0
+    dropped_availability = 0
 
     for row in parsed:
         price_gbp = row["price_gbp"]
@@ -122,10 +124,10 @@ def clean_books(raw_books: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
         in_stock = row["in_stock"]
         if in_stock is None:
-            # Boolean fields are not numeric; assume in stock because that is
-            # the dominant listing state on Books to Scrape, then keep the row.
-            in_stock = True
-            imputed_stock += 1
+            # Availability is a factual state, not a numeric value suitable for
+            # imputation. Drop ambiguous records rather than guessing True.
+            dropped_availability += 1
+            continue
 
         cleaned.append(
             {
@@ -140,7 +142,8 @@ def clean_books(raw_books: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
     print(
         f"Cleaned {len(cleaned)} books; dropped {dropped_identity} rows without title/category; "
-        f"imputed price={imputed_price}, rating={imputed_rating}, in_stock={imputed_stock}."
+        f"imputed price={imputed_price}, rating={imputed_rating}; "
+        f"dropped availability={dropped_availability}."
     )
     return cleaned
 

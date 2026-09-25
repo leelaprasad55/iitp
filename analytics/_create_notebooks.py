@@ -45,14 +45,13 @@ CHARTS.mkdir(parents=True, exist_ok=True)
 CSV_PATH = BASE / "titanic.csv"
 print("Working directory:", BASE)
 """))
-    cells.append(md("## 1. Data profiling\n\nLoad Titanic **once** with `sns.load_dataset('titanic')` and immediately persist it."))
-    cells.append(code("""raw = sns.load_dataset("titanic")
-raw.to_csv(CSV_PATH, index=False)
-print("Saved Titanic once to", CSV_PATH)
+    cells.append(md("## 1. Data profiling\n\nUse the canonical Titanic snapshot from `analytics/titanic.csv` and do not trigger a second dataset download."))
+    cells.append(code("""if not CSV_PATH.exists():
+    raise FileNotFoundError("Run the canonical EDA workflow first to generate analytics/titanic.csv.")
 
-# All later analysis uses the saved CSV, not another independent load.
 df = pd.read_csv(CSV_PATH)
-print("Reloaded from CSV. Shape:", df.shape)
+print("Loaded Titanic snapshot from CSV:", CSV_PATH)
+print("Shape:", df.shape)
 df.head()
 """))
     cells.append(code("""print("=== df.info() ===")
@@ -337,7 +336,7 @@ import seaborn as sns
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline as ImbPipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import (
@@ -612,7 +611,7 @@ reg_preprocess = ColumnTransformer([
 ])
 reg_pipe = Pipeline([
     ("preprocess", reg_preprocess),
-    ("model", RandomForestRegressor(n_estimators=200, random_state=RANDOM_STATE)),
+    ("model", LinearRegression()),
 ])
 reg_pipe.fit(Xr_train, yr_train)
 yr_pred = reg_pipe.predict(Xr_test)

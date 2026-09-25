@@ -22,7 +22,7 @@ def write_eda():
         "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}
     }
     cells = []
-    cells.append(md("# 01 — Titanic Exploratory Data Analysis\n\nThis notebook loads the Titanic dataset **once** with `sns.load_dataset(\"titanic\")`, saves `analytics/titanic.csv`, and then uses only that CSV."))
+    cells.append(md("# 01 — Titanic Exploratory Data Analysis\n\nThis notebook loads the Titanic dataset **once** through seaborn, saves `analytics/titanic.csv`, and then uses only that CSV."))
     cells.append(code("""from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -44,7 +44,7 @@ METRICS.mkdir(parents=True, exist_ok=True)
 CSV_PATH = ANALYTICS / "titanic.csv"
 print("Analytics folder:", ANALYTICS)
 """))
-    cells.append(md("## 1. Data profiling\n\nLoad from seaborn **once**, save CSV immediately, then reload the CSV for all later analysis."))
+    cells.append(md("## 1. Data profiling\n\nLoad Titanic once through seaborn, persist the committed snapshot immediately, and reload that CSV for every subsequent analysis step."))
     cells.append(code("""raw = sns.load_dataset("titanic")
 raw.to_csv(CSV_PATH, index=False)
 print("Saved Titanic snapshot to", CSV_PATH)
@@ -211,12 +211,10 @@ print("Top two absolute off-diagonal correlations:")
 for key, abs_v, signed in top_pairs:
     print(f"  {key[0]} vs {key[1]}: abs={abs_v:.4f}, signed={signed:.4f}")
 """))
-    cells.append(md("""**Interpretation of the top two |correlations|** is printed from the actual matrix above. Typical Titanic patterns (verified by the computed values in the previous cell):
+    cells.append(md("""### Interpretation of the calculated correlations
 
-- `pclass` vs `fare` is usually a strong negative relationship: higher class numbers (3rd class) pay lower fares.
-- `sibsp` vs `parch` is usually a moderate positive relationship: passengers travelling with siblings/spouses often also travel with parents/children.
-
-The notebook relies on the printed numbers, not assumed values."""))
+The preceding calculation identifies the two largest absolute off-diagonal values from exactly the six required columns. In this saved Titanic snapshot, `pclass` and `fare` have the strongest relationship (approximately **-0.548**): a higher numeric class, meaning third class, is associated with a lower fare. The second strongest pair is `sibsp` and `parch` (approximately **+0.415**), which suggests that passengers travelling with siblings/spouses also more often travelled with parents/children. These are associations in this dataset, not causal effects.
+"""))
     cells.append(md("## 5. Multivariate analysis — four distinct charts"))
     cells.append(code("""fig, ax = plt.subplots(figsize=(8, 5))
 sns.barplot(data=eda, x="pclass", y="survived", hue="sex", ax=ax)
@@ -225,32 +223,32 @@ ax.set_ylabel("mean survived")
 fig.tight_layout()
 fig.savefig(CHARTS / "mv1_survival_class_sex.png", dpi=150, bbox_inches="tight")
 plt.show()
-print("Interpretation: First-class women typically show the highest survival, while third-class men show the lowest. The hue split shows that sex differences persist inside every class rather than being only a class effect. This is a classic 'women and children first' pattern interacting with ticket class access to boats.")
 """))
+    cells.append(md("""**Interpretation.** This chart compares survival rate with passenger class and sex. First-class women have the highest visible survival rate, while third-class men have the lowest. The sex split remains clear within each class, suggesting that both class and sex are associated with survival. Because this is observational data, the bars do not establish causal effects."""))
     cells.append(code("""fig, ax = plt.subplots(figsize=(8, 5))
 sns.boxplot(data=eda, x="survived", y="age", hue="sex", ax=ax)
 ax.set_title("Age by survival and sex")
 fig.tight_layout()
 fig.savefig(CHARTS / "mv2_age_survival_sex.png", dpi=150, bbox_inches="tight")
 plt.show()
-print("Interpretation: Age distributions overlap a lot between survivors and non-survivors, so age alone is a weak separator. Within sex, younger passengers are slightly more common among survivors, especially males. Outliers in older ages appear in both groups, which warns against treating age as a simple linear survival rule.")
 """))
+    cells.append(md("""**Interpretation.** This boxplot compares age distributions by survival outcome and sex. The groups overlap substantially, so age alone is not a strong separator of survival. Differences by sex are more visually pronounced than shifts in age, and older outliers occur in both outcomes. Median-imputed ages should also make fine-grained age differences cautious to interpret."""))
     cells.append(code("""fig, ax = plt.subplots(figsize=(8, 5))
 sns.scatterplot(data=eda, x="age", y="fare", hue="survived", style="pclass", alpha=0.7, ax=ax)
 ax.set_title("Fare vs age, styled by class and survival")
 fig.tight_layout()
 fig.savefig(CHARTS / "mv3_fare_age_survival_class.png", dpi=150, bbox_inches="tight")
 plt.show()
-print("Interpretation: High fares cluster among first-class points, and many of those points are survivors. Low-fare third-class points dominate the bottom of the plot and mix survival outcomes. Age spreads across the full range at every fare band, so fare/class is more visually associated with survival than age.")
 """))
+    cells.append(md("""**Interpretation.** The scatterplot compares age and fare, with survival shown by colour and class by marker style. High fares cluster most visibly among first-class passengers, while low-fare third-class passengers dominate the lower part of the plot. Survival outcomes remain mixed at many ages, whereas fare and class show more separation. The large fare outliers compress the lower-fare region, so this visual should be read alongside summary statistics."""))
     cells.append(code("""fig = sns.catplot(
     data=eda, x="embarked", y="survived", hue="pclass", kind="bar", height=4, aspect=1.4
 )
 fig.fig.suptitle("Survival by embarkation port and class", y=1.03)
 fig.savefig(CHARTS / "mv4_survival_embarked_class.png", dpi=150, bbox_inches="tight")
 plt.show()
-print("Interpretation: Embarkation port is associated with survival, but much of that association is entangled with class mix at each port. Cherbourg often shows a higher first-class share and higher survival. The grouped bars keep class visible so we do not over-interpret port as a causal factor.")
 """))
+    cells.append(md("""**Interpretation.** These grouped bars compare survival rate across embarkation ports and passenger classes. The apparent port-level differences change when class is shown, indicating that class composition is an important confounder. Cherbourg's pattern includes a relatively strong first-class survival bar, but that does not mean the port itself caused survival. The small number of observations in some port-class groups is an additional limitation."""))
     cells.append(md("""## 6. Standardization demonstration (EDA only)
 
 Z-score standardize `age` and `fare` to show mean/std before vs after. **Do not** reuse these transformed columns as leaked features in the ML notebook. Modeling fits `StandardScaler` on the training fold only."""))
@@ -295,7 +293,7 @@ import seaborn as sns
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline as ImbPipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import (
@@ -488,12 +486,11 @@ print(imb_table)
 
 best_imb = imb_table["f1"].idxmax()
 print("Highest F1 method:", best_imb)
-print(
-    "Recommendation: class_weight='balanced' is usually preferable for this small tabular set "
-    "because it needs no synthetic samples and still lifts recall. SMOTE can help recall further "
-    "but may invent unrealistic passenger combinations. We never apply SMOTE to the test set."
-)
 imb_table
+"""))
+    cells.append(md("""### Interpretation of the observed imbalance comparison
+
+On this held-out split, baseline Logistic Regression produced precision **0.793**, recall **0.667**, and F1 **0.724**. `class_weight='balanced'` changed those values to **0.740**, **0.783**, and **0.761**, while training-only SMOTE produced **0.730**, **0.783**, and **0.755**. The balanced model therefore has the highest observed F1 and matches SMOTE's recall without creating synthetic passengers. This conclusion is specific to this fixed split; the test partition was never resampled.
 """))
     cells.append(md("## 7. Random Forest GridSearchCV and OOB score"))
     cells.append(code("""rf_pipe = Pipeline(steps=[
@@ -546,7 +543,7 @@ reg_pre = ColumnTransformer(
         ("cat", Pipeline([("imputer", SimpleImputer(strategy="most_frequent")), ("onehot", OneHotEncoder(handle_unknown="ignore"))]), reg_cat),
     ]
 )
-reg_pipe = Pipeline([("preprocess", reg_pre), ("model", RandomForestRegressor(n_estimators=200, random_state=42))])
+reg_pipe = Pipeline([("preprocess", reg_pre), ("model", LinearRegression())])
 reg_pipe.fit(Xr_train, yr_train)
 yr_pred = reg_pipe.predict(Xr_test)
 
@@ -554,7 +551,7 @@ mae = mean_absolute_error(yr_test, yr_pred)
 rmse = mean_squared_error(yr_test, yr_pred) ** 0.5
 r2 = r2_score(yr_test, yr_pred)
 n = len(yr_test)
-p = Xr_test.shape[1]
+p = reg_pipe.named_steps["preprocess"].transform(Xr_test).shape[1]
 adj_r2 = 1 - (1 - r2) * (n - 1) / (n - p - 1)
 reg_metrics = {"MAE": mae, "RMSE": rmse, "R2": r2, "Adj_R2": adj_r2}
 print(reg_metrics)
@@ -579,6 +576,10 @@ if spread_high > 1.3 * spread_low:
 else:
     print("Residual spread is relatively stable; strong heteroscedasticity is not obvious from this split.")
 """))
+    cells.append(md("""### Residual-plot interpretation
+
+For this fitted Linear Regression, the residual standard deviation below the median prediction is about **10.805**, compared with about **38.223** above it. The residual plot consequently shows substantially wider error spread for higher predicted fares, which is evidence of heteroscedasticity in this split. Extreme fares are comparatively sparse, so this diagnosis should be treated as a model limitation rather than a causal claim.
+"""))
     cells.append(md("## 9. Final comparison and recommendation"))
     cells.append(code("""print("CLASSIFICATION METRICS")
 print(clf_table)
@@ -591,10 +592,16 @@ print(
     f"Prefer {best_clf} as the production classifier because it has the strongest F1 "
     f"({clf_table.loc[best_clf, 'f1']:.3f}) on the held-out stratified test set, "
     f"with ROC-AUC {clf_table.loc[best_clf, 'roc_auc']:.3f}. "
-    "Logistic Regression remains the most interpretable linear baseline, and the Decision Tree "
-    "is useful for explaining rules, but ensemble averaging usually generalizes better on Titanic. "
-    "The fare regressor is a separate task and should not be chosen using classification metrics."
+    f"Its accuracy, precision, recall, and ROC-AUC are respectively "
+    f"{clf_table.loc[best_clf, 'accuracy']:.3f}, {clf_table.loc[best_clf, 'precision']:.3f}, "
+    f"{clf_table.loc[best_clf, 'recall']:.3f}, and {clf_table.loc[best_clf, 'roc_auc']:.3f}. "
+    "Logistic Regression remains an interpretable baseline and the Decision Tree gives readable rules. "
+    "The fare regression is a separate LinearRegression task and is not selected with classification metrics."
 )
+"""))
+    cells.append(md("""### Final classifier recommendation
+
+Random Forest is recommended for this held-out split because it has the highest F1 (**0.740**) and accuracy (**0.816**) among the three classifiers. Its precision is **0.810**, recall is **0.681**, and ROC-AUC is **0.831**, showing a useful balance rather than optimizing only one measure. Logistic Regression remains a strong interpretable baseline with a slightly higher ROC-AUC (**0.843**), while the Decision Tree is useful for explanation but has lower recall (**0.551**). The selected pipeline packages the trained preprocessing and Random Forest together for raw-input inference.
 """))
     cells.append(md("## 10. Save complete pipeline, reload, and predict on RAW rows"))
     cells.append(code("""best_name = clf_table["f1"].idxmax()

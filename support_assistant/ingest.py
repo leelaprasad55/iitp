@@ -50,10 +50,16 @@ def chunk_text(text: str, source: str, max_chars: int = 500, overlap: int = 80) 
             while start < len(para):
                 end = min(start + max_chars, len(para))
                 emit(para[start:end])
-                start = max(end - overlap, end)
+                if end >= len(para):
+                    break
+                next_start = max(0, end - overlap)
+                if next_start <= start:
+                    next_start = min(len(para), start + 1)
+                start = next_start
         if len(buffer) > max_chars:
             emit(buffer[:max_chars])
-            buffer = buffer[max_chars - overlap :]
+            trim_index = max(0, len(buffer) - overlap) if overlap else len(buffer)
+            buffer = buffer[trim_index:]
 
     if buffer:
         emit(buffer)

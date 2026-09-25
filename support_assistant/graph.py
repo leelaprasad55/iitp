@@ -28,6 +28,7 @@ POLICY_KEYWORDS = [
     "refund",
     "membership",
     "tracking",
+    "track",
     "cancel",
     "gift card",
     "giftcard",
@@ -62,14 +63,8 @@ def _keyword_intent(query: str) -> str:
 
 
 def classify_intent(state: GraphState) -> GraphState:
-    """Keyword heuristic in MOCK_LLM mode; optional LLM classify when MOCK_LLM=0."""
-    query = state["query"]
-    if mock_llm_enabled():
-        state["intent"] = _keyword_intent(query)
-        return state
-
-    llm_intent = _real_llm_classify(query)
-    state["intent"] = llm_intent or _keyword_intent(query)
+    """Route case-insensitively by policy keywords in every generation mode."""
+    state["intent"] = _keyword_intent(state["query"])
     return state
 
 
